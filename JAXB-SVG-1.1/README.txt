@@ -1,0 +1,1 @@
+JAXB content model for SVG, generated using XJC.
