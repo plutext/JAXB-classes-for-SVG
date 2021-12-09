@@ -18,5 +18,5 @@
 
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.w3.org/2000/svg", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.w3.org/2000/svg", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.plutext.jaxb.svg11;
