@@ -4,14 +4,22 @@
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>7</version>
+		<version>9</version>
 	</parent>
 
 	<groupId>org.plutext</groupId>
 	<artifactId>jaxb-svg11</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
-	<packaging>jar</packaging>
-
+	<version>8.2.1</version>
+	<packaging>bundle</packaging><!--  OSGi -->
+	
+	<!-- 
+	<packaging>${packaging.type}</packaging>
+	
+	<properties>
+		<packaging.type>jar</packaging.type>
+	</properties>	
+ -->
+ 
 	<name>jaxb-svg11</name>
 	<description>JAXB classes modelling SVG 1.1</description>
 	<url>https://github.com/plutext/JAXB-classes-for-SVG</url>
@@ -45,37 +53,20 @@
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<!--<testSourceDirectory>src/test/java</testSourceDirectory> -->
 		<outputDirectory>bin</outputDirectory>
-		<testOutputDirectory>bin</testOutputDirectory>
+		<testOutputDirectory>binTest</testOutputDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.8.1</version>
 				<configuration>
-					<!-- The objective is to generate a jar which is compatible with Java 
-						1.5, whilst at the same time allowing @Override annotations in the source 
-						code on methods which merely implement an interface (Java 6 allows this, 
-						but 1.5 gives an error). When I played around with this, I found that both 
-						maven and ant would happily compile to target 1.5 with the pesky @Override 
-						annotations present (irrespective of whether source was set to 1.5 or 1.6). 
-						You are not allowed source=1.6, target=1.5; this results in: Failure executing 
-						javac, but could not parse the error javac: source release 1.6 requires target 
-						release 1.6 So we need source=1.5, target=1.5 The downside is that m2eclipse 
-						mirrors this in Eclipse's compiler settings, and Eclipse then complains about 
-						the @Override annotations :-( So you must manually change the Eclipse compiler 
-						setting back to 1.6. -->
-					<source>1.5</source>
-					<target>1.5</target>
-
-					<verbose>false</verbose>
-					<!-- maxmemory>512m</maxmemory On Linux, use: MAVEN_OPTS="-Xmx512m" mvn install -->
-					<!-- try to help maven to find package com.sun.xml.internal.bind.marshaller: 
-						<bootclasspath>${java.home}/lib/rt.jar</bootclasspath> but this doesn't help -->
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>				
+				<version>3.0.1</version>				
 				<executions>
 					<execution>
 						<goals>
@@ -84,11 +75,35 @@
 					</execution>
 				</executions>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <!-- <version>2.5.3</version> -->
+                <version>4.1.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                    	<Manifest-Version>2.0</Manifest-Version>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Import-Package>
+                            javax.xml.bind;version="[2.0.0,3)";resolution:=optional
+                        </Import-Package> <!--  that is important, to avoid exporting javax.xml.bind and causing two dependency chain issue -->
+                        <Export-Package>
+                            org.plutext.jaxb.svg11
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>				
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.8</version>				
 				<configuration>
-				</configuration>
+					<maxmemory>512m</maxmemory>
+			        <additionalparam>-Xdoclint:none</additionalparam> 
+                    <source>8</source>
+				 </configuration>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -101,36 +116,17 @@
 		</plugins>
 	</build>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.8</version>				
-				<reportSets>
-					<reportSet>
-						<id>standard-javadoc</id>
-						<inherited>true</inherited>
-						<configuration>
-							<description>JAXB content model for SVG</description>
-							<docfilessubdirs>true</docfilessubdirs>
-							<failOnError>false</failOnError>
-							<locale>en_AU</locale>
-							<name>Javadoc report</name>
-							<quiet>true</quiet>
-							<serialwarn>false</serialwarn>
-							<show>private</show>
-							<source>1.6</source>
-							<stylesheet>maven</stylesheet>
-							<version>true</version>
-						</configuration>
-						<reports>
-							<report>javadoc</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-		</plugins>
-	</reporting>
+		<!--  required if eclipse is using a recent Java 
+	<dependencies>
+
+		<dependency>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>2.3.2</version>
+		</dependency>
+				
+	</dependencies>
+-->	
 
 	<profiles> <!--  use -P eg mvn -Psign-artifacts  -->
 		<profile>
@@ -154,5 +150,13 @@
 				</plugins>
 			</build>
 		</profile>
+		
+<!-- 		<profile>
+			<id>OSGi</id>
+			<properties>
+				<packaging.type>bundle</packaging.type>
+			</properties>
+		</profile>
+	 -->	
 	</profiles>
 </project>
