@@ -9,7 +9,7 @@
 
 	<groupId>org.plutext</groupId>
 	<artifactId>jaxb-svg11</artifactId>
-	<version>11.4.0</version>
+	<version>11.4.1-SNAPSHOT</version>
 	<packaging>bundle</packaging><!--  OSGi -->
 	
 	<!-- 
