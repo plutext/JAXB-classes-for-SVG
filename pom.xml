@@ -9,7 +9,7 @@
 
 	<groupId>org.plutext</groupId>
 	<artifactId>jaxb-svg11</artifactId>
-	<version>8.2.1</version>
+	<version>11.4.0-SNAPSHOT</version>
 	<packaging>bundle</packaging><!--  OSGi -->
 	
 	<!-- 
@@ -60,8 +60,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<release>11</release>				
 				</configuration>
 			</plugin>
 			<plugin>
@@ -88,7 +87,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Import-Package>
-                            javax.xml.bind;version="[2.0.0,3)";resolution:=optional
+                            jakarta.xml.bind;version="[3.0.0,4)";resolution:=optional
                         </Import-Package> <!--  that is important, to avoid exporting javax.xml.bind and causing two dependency chain issue -->
                         <Export-Package>
                             org.plutext.jaxb.svg11
@@ -98,11 +97,8 @@
             </plugin>				
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.8</version>				
+				<version>3.1.0</version>				
 				<configuration>
-					<maxmemory>512m</maxmemory>
-			        <additionalparam>-Xdoclint:none</additionalparam> 
-                    <source>8</source>
 				 </configuration>
 				<executions>
 					<execution>
@@ -116,6 +112,22 @@
 		</plugins>
 	</build>
 
+	<dependencies>
+
+		<!--  docx4j v11.4.0 and later use JAXB 3.0 -->
+		<dependency>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.8.0-beta4</version> <!-- was beta 2 -->
+		</dependency>
+
+	</dependencies>	
 		<!--  required if eclipse is using a recent Java 
 	<dependencies>
 
